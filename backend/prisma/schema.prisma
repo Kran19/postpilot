@@ -1,0 +1,331 @@
+// POSTPILOT Production Prisma Database Schema
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  owner
+  admin
+  manager
+  agent
+}
+
+enum ChannelType {
+  instagram
+  facebook
+  whatsapp
+  threads
+}
+
+enum AssetStatus {
+  connected
+  connecting
+  disconnected
+  expired
+  reauth_required
+}
+
+enum AutomationStatus {
+  active
+  paused
+  draft
+  error
+}
+
+enum ExecutionStatus {
+  pending
+  running
+  succeeded
+  failed
+  cancelled
+}
+
+enum ConversationStatus {
+  open
+  automated
+  resolved
+}
+
+enum SenderType {
+  customer
+  bot
+  agent
+}
+
+enum MessageStatus {
+  sent
+  delivered
+  read
+  failed
+}
+
+enum WebhookStatus {
+  pending
+  processed
+  failed
+  duplicate
+}
+
+model User {
+  id               String            @id @default(uuid()) @db.Uuid
+  email            String            @unique @db.VarChar(255)
+  passwordHash     String            @map("password_hash") @db.VarChar(255)
+  fullName         String            @map("full_name") @db.VarChar(255)
+  avatarUrl        String?           @map("avatar_url") @db.Text
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  memberships      WorkspaceMember[]
+  auditLogs        AuditLog[]
+  createdVersions  AutomationVersion[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id               String            @id @default(uuid()) @db.Uuid
+  name             String            @db.VarChar(255)
+  slug             String            @unique @db.VarChar(255)
+  planTier         String            @default("pro") @map("plan_tier") @db.VarChar(50)
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  members          WorkspaceMember[]
+  metaConnections  MetaConnection[]
+  connectedAssets  ConnectedAsset[]
+  automations      Automation[]
+  executions       AutomationExecution[]
+  contacts         Contact[]
+  conversations    Conversation[]
+  auditLogs        AuditLog[]
+
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id           String    @id @default(uuid()) @db.Uuid
+  workspaceId  String    @map("workspace_id") @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  role         Role      @default(agent)
+  status       String    @default("active") @db.VarChar(50)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@map("workspace_members")
+}
+
+model MetaConnection {
+  id              String           @id @default(uuid()) @db.Uuid
+  workspaceId     String           @map("workspace_id") @db.Uuid
+  metaUserId      String           @map("meta_user_id") @db.VarChar(255)
+  grantedScopes   String[]         @map("granted_scopes")
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz
+
+  workspace       Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  assets          ConnectedAsset[]
+
+  @@map("meta_connections")
+}
+
+model ConnectedAsset {
+  id               String          @id @default(uuid()) @db.Uuid
+  workspaceId      String          @map("workspace_id") @db.Uuid
+  metaConnectionId String?         @map("meta_connection_id") @db.Uuid
+  channel          ChannelType
+  name             String          @db.VarChar(255)
+  externalAssetId  String          @map("external_asset_id") @db.VarChar(255)
+  handleOrNumber   String          @map("handle_or_number") @db.VarChar(255)
+  avatarUrl        String?         @map("avatar_url") @db.Text
+  status           AssetStatus     @default(connected)
+  lastSyncedAt     DateTime        @default(now()) @map("last_synced_at") @db.Timestamptz
+
+  workspace        Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  metaConnection   MetaConnection? @relation(fields: [metaConnectionId], references: [id], onDelete: SetNull)
+  credential       MetaCredential?
+  conversations    Conversation[]
+
+  @@map("connected_assets")
+}
+
+model MetaCredential {
+  id                  String         @id @default(uuid()) @db.Uuid
+  connectedAssetId    String         @unique @map("connected_asset_id") @db.Uuid
+  credentialType      String         @map("credential_type") @db.VarChar(50)
+  providerAccountId   String         @map("provider_account_id") @db.VarChar(255)
+  encryptedAccessToken TEXT          @map("encrypted_access_token")
+  encryptedRefreshToken TEXT?        @map("encrypted_refresh_token")
+  scopes              String[]
+  issuedAt            DateTime       @default(now()) @map("issued_at") @db.Timestamptz
+  expiresAt           DateTime?      @map("expires_at") @db.Timestamptz
+  lastValidatedAt     DateTime       @default(now()) @map("last_validated_at") @db.Timestamptz
+  revokedAt           DateTime?      @map("revoked_at") @db.Timestamptz
+  status              String         @default("active") @db.VarChar(50)
+
+  connectedAsset      ConnectedAsset @relation(fields: [connectedAssetId], references: [id], onDelete: Cascade)
+
+  @@map("meta_credentials")
+}
+
+model Automation {
+  id               String               @id @default(uuid()) @db.Uuid
+  workspaceId      String               @map("workspace_id") @db.Uuid
+  name             String               @db.VarChar(255)
+  description      String?              @db.Text
+  channel          ChannelType
+  status           AutomationStatus     @default(active)
+  activeVersionId  String?              @map("active_version_id") @db.Uuid
+  createdAt        DateTime             @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime             @updatedAt @map("updated_at") @db.Timestamptz
+
+  workspace        Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  versions         AutomationVersion[]
+  executions       AutomationExecution[]
+  messages         Message[]
+
+  @@map("automations")
+}
+
+model AutomationVersion {
+  id            String                @id @default(uuid()) @db.Uuid
+  automationId  String                @map("automation_id") @db.Uuid
+  versionNumber Int                   @map("version_number")
+  dagDefinition Json                  @map("dag_definition")
+  createdByUserId String?             @map("created_by_user_id") @db.Uuid
+  createdAt     DateTime              @default(now()) @map("created_at") @db.Timestamptz
+
+  automation    Automation            @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  createdByUser User?                 @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  executions    AutomationExecution[]
+
+  @@unique([automationId, versionNumber])
+  @@map("automation_versions")
+}
+
+model AutomationExecution {
+  id                  String            @id @default(uuid()) @db.Uuid
+  workspaceId         String            @map("workspace_id") @db.Uuid
+  automationId        String            @map("automation_id") @db.Uuid
+  automationVersionId String            @map("automation_version_id") @db.Uuid
+  webhookEventId      String?           @map("webhook_event_id") @db.Uuid
+  status              ExecutionStatus   @default(pending)
+  errorMessage        String?           @map("error_message") @db.Text
+  executedAt          DateTime          @default(now()) @map("executed_at") @db.Timestamptz
+
+  workspace           Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  automation          Automation        @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  version             AutomationVersion @relation(fields: [automationVersionId], references: [id], onDelete: Cascade)
+  webhookEvent        WebhookEvent?     @relation(fields: [webhookEventId], references: [id], onDelete: SetNull)
+  steps               ExecutionStep[]
+
+  @@map("automation_executions")
+}
+
+model ExecutionStep {
+  id           String              @id @default(uuid()) @db.Uuid
+  executionId  String              @map("execution_id") @db.Uuid
+  stepName     String              @map("step_name") @db.VarChar(255)
+  status       String              @db.VarChar(50) // 'pass', 'fail', 'info'
+  details      String?             @db.Text
+  executedAt   DateTime            @default(now()) @map("executed_at") @db.Timestamptz
+
+  execution    AutomationExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+
+  @@map("execution_steps")
+}
+
+model Contact {
+  id               String                  @id @default(uuid()) @db.Uuid
+  workspaceId      String                  @map("workspace_id") @db.Uuid
+  name             String                  @db.VarChar(255)
+  primaryEmail     String?                 @map("primary_email") @db.VarChar(255)
+  phone            String?                 @db.VarChar(50)
+  tags             Json                    @default("[]")
+  createdAt        DateTime                @default(now()) @map("created_at") @db.Timestamptz
+
+  workspace        Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  identities       ContactChannelIdentity[]
+  conversations    Conversation[]
+
+  @@map("contacts")
+}
+
+model ContactChannelIdentity {
+  id             String      @id @default(uuid()) @db.Uuid
+  contactId      String      @map("contact_id") @db.Uuid
+  channel        ChannelType
+  externalUserId String      @map("external_user_id") @db.VarChar(255)
+  handle         String      @db.VarChar(255)
+
+  contact        Contact     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@unique([channel, externalUserId])
+  @@map("contact_channel_identities")
+}
+
+model Conversation {
+  id               String             @id @default(uuid()) @db.Uuid
+  workspaceId      String             @map("workspace_id") @db.Uuid
+  connectedAssetId String             @map("connected_asset_id") @db.Uuid
+  contactId        String             @map("contact_id") @db.Uuid
+  channel          ChannelType
+  status           ConversationStatus @default(open)
+  assignedAgentId  String?            @map("assigned_agent_id") @db.Uuid
+  lastMessageAt    DateTime           @default(now()) @map("last_message_at") @db.Timestamptz
+
+  workspace        Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  connectedAsset   ConnectedAsset     @relation(fields: [connectedAssetId], references: [id], onDelete: Cascade)
+  contact          Contact            @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  messages         Message[]
+
+  @@map("conversations")
+}
+
+model Message {
+  id               String        @id @default(uuid()) @db.Uuid
+  conversationId   String        @map("conversation_id") @db.Uuid
+  senderType       SenderType    @map("sender_type")
+  text             String        @db.Text
+  automationRuleId String?       @map("automation_rule_id") @db.Uuid
+  externalMessageId String?      @map("external_message_id") @db.VarChar(255)
+  status           MessageStatus @default(sent)
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  conversation     Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  automation       Automation?   @relation(fields: [automationRuleId], references: [id], onDelete: SetNull)
+
+  @@map("messages")
+}
+
+model WebhookEvent {
+  id                String                @id @default(uuid()) @db.Uuid
+  externalEventId   String                @unique @map("external_event_id") @db.VarChar(255)
+  channel           ChannelType
+  rawPayload        Json                  @map("raw_payload")
+  signatureVerified Boolean               @map("signature_verified")
+  processingStatus  WebhookStatus         @default(pending) @map("processing_status")
+  processedAt       DateTime?             @map("processed_at") @db.Timestamptz
+  receivedAt        DateTime              @default(now()) @map("received_at") @db.Timestamptz
+  executions        AutomationExecution[]
+
+  @@map("webhook_events")
+}
+
+model AuditLog {
+  id           String    @id @default(uuid()) @db.Uuid
+  workspaceId  String    @map("workspace_id") @db.Uuid
+  userId       String?   @map("user_id") @db.Uuid
+  action       String    @db.VarChar(255)
+  targetEntity String    @map("target_entity") @db.VarChar(255)
+  changes      Json?
+  ipAddress    String?   @map("ip_address") @db.VarChar(100)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user         User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
