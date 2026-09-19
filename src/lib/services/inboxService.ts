@@ -9,7 +9,7 @@ export const inboxService = {
   async sendMessage(conversationId: string, text: string, senderName: string = 'Support Agent'): Promise<Message> {
     const conv = MOCK_CONVERSATIONS.find((c) => c.id === conversationId);
     const newMsg: Message = {
-      id: `msg-${Date.now()}`,
+      id: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       conversationId,
       sender: 'agent',
       senderName,

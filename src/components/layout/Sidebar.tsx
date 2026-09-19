@@ -11,14 +11,19 @@ import {
   Radio, 
   BarChart2, 
   FileText, 
-  ShieldAlert, 
   CreditCard, 
   Settings, 
   Crown,
   ChevronDown,
   MoreVertical,
   ArrowRight,
-  Send
+  Send,
+  Zap,
+  Layers,
+  Sparkles,
+  GitBranch,
+  Sliders,
+  PhoneCall
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -38,6 +43,17 @@ const PRIMARY_NAV: NavItem[] = [
   { name: 'Analytics', href: '/app/analytics', icon: BarChart2 },
 ];
 
+const WHATSAPP_NAV: NavItem[] = [
+  { name: 'Overview', href: '/app/whatsapp', icon: LayoutGrid },
+  { name: 'Automations', href: '/app/whatsapp/automations', icon: Zap },
+  { name: 'Templates', href: '/app/whatsapp/templates', icon: FileText },
+  { name: 'Campaigns', href: '/app/whatsapp/campaigns', icon: Send },
+  { name: 'Flows', href: '/app/whatsapp/flows', icon: GitBranch },
+  { name: 'Conversations', href: '/app/whatsapp/conversations', icon: MessageSquare },
+  { name: 'Analytics', href: '/app/whatsapp/analytics', icon: BarChart2 },
+  { name: 'Settings', href: '/app/whatsapp/settings', icon: Sliders },
+];
+
 const SECONDARY_NAV: NavItem[] = [
   { name: 'Message Templates', href: '/app/templates', icon: FileText },
   { name: 'Team & Permissions', href: '/app/team', icon: Users },
@@ -45,20 +61,59 @@ const SECONDARY_NAV: NavItem[] = [
   { name: 'Settings', href: '/app/settings', icon: Settings },
 ];
 
+let cachedSidebarScroll = 0;
+
 export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
   const pathname = usePathname();
+  const asideRef = React.useRef<HTMLElement | null>(null);
+
+  // Restore scroll position on initial load and after pathname navigation
+  React.useEffect(() => {
+    const aside = asideRef.current;
+    if (!aside) return;
+
+    const saved = cachedSidebarScroll || Number(sessionStorage.getItem('pp_sidebar_scroll') || '0');
+    if (saved > 0) {
+      aside.scrollTop = saved;
+    }
+  }, [pathname]);
+
+  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    const top = e.currentTarget.scrollTop;
+    cachedSidebarScroll = top;
+    try {
+      sessionStorage.setItem('pp_sidebar_scroll', String(top));
+    } catch {}
+  };
+
+  const handleLinkClick = () => {
+    if (asideRef.current) {
+      const top = asideRef.current.scrollTop;
+      cachedSidebarScroll = top;
+      try {
+        sessionStorage.setItem('pp_sidebar_scroll', String(top));
+      } catch {}
+    }
+  };
 
   return (
-    <aside className={cn('w-64 bg-white border-r border-gray-200/80 flex flex-col justify-between p-4 h-screen sticky top-0 overflow-y-auto select-none shadow-xs', className)}>
-      <div className="space-y-5">
+    <aside
+      ref={asideRef}
+      onScroll={handleScroll}
+      className={cn(
+        'w-64 bg-white border-r border-gray-200/80 flex flex-col justify-between p-4 h-screen sticky top-0 overflow-y-auto select-none shadow-xs',
+        className
+      )}
+    >
+      <div className="space-y-4">
         {/* Brand Header */}
-        <Link href="/app/dashboard" className="flex items-center gap-3 px-2 pt-1">
+        <Link href="/app/dashboard" scroll={false} onClick={handleLinkClick} className="flex items-center gap-3 px-2 pt-1">
           <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center text-white shadow-xs">
             <Send className="w-4 h-4 fill-white text-white -rotate-12 translate-x-0.5 -translate-y-0.5" />
           </div>
           <div>
             <span className="text-base font-bold tracking-tight text-gray-900 block leading-tight">PostPilot</span>
-            <span className="text-[11px] text-gray-400 block font-normal">Automate. Engage. Grow.</span>
+            <span className="text-[10px] font-semibold text-gray-400 block uppercase tracking-wider">Social SaaS Engine</span>
           </div>
         </Link>
 
@@ -77,7 +132,7 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
         </div>
 
         {/* Primary Navigation */}
-        <nav className="space-y-1">
+        <nav className="space-y-0.5">
           {PRIMARY_NAV.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/app/dashboard' && pathname.startsWith(`${item.href}`));
             const Icon = item.icon;
@@ -85,19 +140,21 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
               <Link
                 key={item.name}
                 href={item.href}
+                scroll={false}
+                onClick={handleLinkClick}
                 className={cn(
-                  'flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-colors',
+                  'flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors',
                   isActive
                     ? 'bg-[#E3ECE6] text-[#1D3B2A] font-semibold'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 )}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <Icon className={cn('w-4 h-4', isActive ? 'text-[#1D3B2A]' : 'text-gray-500')} />
                   <span>{item.name}</span>
                 </div>
                 {item.badge && (
-                  <span className="w-5 h-5 rounded-full bg-[#16A34A] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+                  <span className="w-4 h-4 rounded-full bg-[#16A34A] text-white text-[9px] font-bold flex items-center justify-center shadow-xs">
                     {item.badge}
                   </span>
                 )}
@@ -105,8 +162,52 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
             );
           })}
 
+          {/* DEDICATED WHATSAPP SECTION */}
           <div className="pt-3 pb-1">
-            <div className="border-t border-gray-100" />
+            <div className="flex items-center justify-between px-3 mb-1">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#25D366]" />
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">WHATSAPP</span>
+              </div>
+              <span className="text-[9px] font-semibold text-[#1E7E34] bg-[#EAF5EE] px-1.5 py-0.2 rounded-full">
+                Connected
+              </span>
+            </div>
+          </div>
+
+          {WHATSAPP_NAV.map((item) => {
+            const isOverview = item.href === '/app/whatsapp';
+            const isActive = isOverview 
+              ? pathname === '/app/whatsapp' 
+              : pathname.startsWith(item.href);
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                scroll={false}
+                onClick={handleLinkClick}
+                className={cn(
+                  'flex items-center justify-between px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
+                  isActive
+                    ? 'bg-[#EAF5EE] text-[#15803D] font-bold shadow-2xs'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                )}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Icon className={cn('w-3.5 h-3.5', isActive ? 'text-[#16A34A]' : 'text-gray-400')} />
+                  <span>{item.name}</span>
+                </div>
+              </Link>
+            );
+          })}
+
+          {/* Secondary Divider & Settings */}
+          <div className="pt-3 pb-1">
+            <div className="border-t border-gray-100 px-3 pt-1">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">WORKSPACE</span>
+            </div>
           </div>
 
           {SECONDARY_NAV.map((item) => {
@@ -116,15 +217,17 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
               <Link
                 key={item.name}
                 href={item.href}
+                scroll={false}
+                onClick={handleLinkClick}
                 className={cn(
-                  'flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-colors',
+                  'flex items-center justify-between px-3 py-1.5 rounded-xl text-xs font-medium transition-colors',
                   isActive
                     ? 'bg-[#E3ECE6] text-[#1D3B2A] font-semibold'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 )}
               >
-                <div className="flex items-center gap-3">
-                  <Icon className={cn('w-4 h-4', isActive ? 'text-[#1D3B2A]' : 'text-gray-500')} />
+                <div className="flex items-center gap-2.5">
+                  <Icon className={cn('w-3.5 h-3.5', isActive ? 'text-[#1D3B2A]' : 'text-gray-400')} />
                   <span>{item.name}</span>
                 </div>
               </Link>
@@ -133,27 +236,31 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
         </nav>
       </div>
 
-      <div className="space-y-4 pt-4">
+      <div className="space-y-3 pt-3">
         {/* Upgrade to Enterprise Card */}
-        <div className="bg-[#FAF7F2] border border-[#EAE5D8] rounded-2xl p-4 shadow-xs">
-          <Crown className="w-4 h-4 text-[#A1711C] mb-2 fill-[#A1711C]" />
-          <h5 className="text-xs font-bold text-gray-900">Upgrade to Enterprise</h5>
-          <p className="text-[10px] text-gray-500 mt-0.5 leading-normal">
-            More channels. More power. More growth.
+        <div className="bg-[#FAF7F2] border border-[#EAE5D8] rounded-xl p-3.5 shadow-2xs">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Crown className="w-3.5 h-3.5 text-[#A1711C] fill-[#A1711C]" />
+            <h5 className="text-xs font-bold text-gray-900">Enterprise Scale</h5>
+          </div>
+          <p className="text-[10px] text-gray-500 leading-normal">
+            Higher WhatsApp Cloud API limits & dedicated Meta WABA IP.
           </p>
           <Link
             href="/app/billing"
-            className="mt-3 w-full bg-[#1D3B2A] hover:bg-[#162F22] text-white text-xs font-semibold py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition shadow-xs"
+            scroll={false}
+            onClick={handleLinkClick}
+            className="mt-2.5 w-full bg-[#1D3B2A] hover:bg-[#162F22] text-white text-[11px] font-semibold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition shadow-2xs"
           >
             <span>Upgrade Plan</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
 
         {/* User Profile Footer */}
         <div className="pt-2 border-t border-gray-100 flex items-center justify-between px-1">
           <div className="flex items-center gap-2.5 truncate">
-            <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-full bg-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center shrink-0">
               AM
             </div>
             <div className="truncate">
@@ -161,7 +268,7 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
               <p className="text-[10px] text-gray-400 truncate">alex@acmestudio.io</p>
             </div>
           </div>
-          <button className="text-gray-400 hover:text-gray-600 p-1" aria-label="Account Settings">
+          <button className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer" aria-label="Account Settings">
             <MoreVertical className="w-3.5 h-3.5" />
           </button>
         </div>
