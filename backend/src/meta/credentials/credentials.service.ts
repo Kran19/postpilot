@@ -70,7 +70,6 @@ export class CredentialsService {
       where: { id: connectedAssetId },
       data: {
         status: 'reauth_required',
-        errorMessage: 'Meta access token revoked or expired. Please reauthorize.',
       },
     });
   }

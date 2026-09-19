@@ -3,82 +3,81 @@
 import React from 'react';
 import { CreditCard, CheckCircle2, Zap, ArrowUpRight } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
-import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 
 export default function BillingPage() {
   return (
-    <AppShell title="Billing & Quotas" description="Subscription Tier, Usage Limits & Invoices">
-      <div className="space-y-8">
+    <AppShell title="Billing & Usage">
+      <div className="space-y-6">
         {/* Current Plan Overview Card */}
-        <Card className="p-6 border-indigo-500/50 bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
+        <div className="p-6 rounded-2xl bg-[#FAF7F2] border border-[#EAE5D8] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
+          <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <Badge variant="info">Current Subscription</Badge>
-              <span className="text-xs text-slate-400 font-mono">Renewal Date: Oct 15, 2026</span>
+              <span className="text-[10px] font-bold bg-[#EAF5EE] text-[#1E7E34] px-2 py-0.5 rounded-full uppercase">Current Subscription</span>
+              <span className="text-xs text-gray-400 font-mono">Renewal Date: Oct 15, 2026</span>
             </div>
-            <h2 className="text-3xl font-extrabold text-white">Pro Pilot Tier — $49/mo</h2>
-            <p className="text-xs text-slate-300">Active monthly billing for workspace Acme Brand Studio.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Pro Pilot Tier — $49/mo</h2>
+            <p className="text-xs text-gray-600">Active monthly billing for workspace Acme Brand Studio.</p>
           </div>
 
-          <Button variant="primary" size="lg" rightIcon={<ArrowUpRight className="w-4 h-4" />}>
+          <Button variant="primary" size="md" rightIcon={<ArrowUpRight className="w-4 h-4" />}>
             Upgrade to Business Tier
           </Button>
-        </Card>
+        </div>
 
         {/* Feature Usage Quota Meters */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs space-y-3">
             <div className="flex justify-between text-xs font-semibold">
-              <span className="text-slate-300">Connected Meta Assets</span>
-              <span className="text-indigo-400">4 / 5 Assets</span>
+              <span className="text-gray-700">Connected Meta Assets</span>
+              <span className="text-gray-900 font-bold">4 / 5 Assets</span>
             </div>
-            <div className="h-2 rounded-full bg-slate-950 overflow-hidden border border-slate-800">
-              <div className="h-full bg-indigo-500 rounded-full" style={{ width: '80%' }} />
+            <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+              <div className="h-full bg-[#18181B] rounded-full" style={{ width: '80%' }} />
             </div>
-            <p className="text-[11px] text-slate-500">1 asset slot remaining on Pro tier.</p>
-          </Card>
+            <p className="text-[11px] text-gray-400">1 asset slot remaining on Pro tier.</p>
+          </div>
 
-          <Card className="space-y-3">
+          <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs space-y-3">
             <div className="flex justify-between text-xs font-semibold">
-              <span className="text-slate-300">Active Automation Rules</span>
-              <span className="text-indigo-400">8 / 20 Rules</span>
+              <span className="text-gray-700">Active Automation Rules</span>
+              <span className="text-gray-900 font-bold">8 / 20 Rules</span>
             </div>
-            <div className="h-2 rounded-full bg-slate-950 overflow-hidden border border-slate-800">
-              <div className="h-full bg-indigo-500 rounded-full" style={{ width: '40%' }} />
+            <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+              <div className="h-full bg-[#18181B] rounded-full" style={{ width: '40%' }} />
             </div>
-            <p className="text-[11px] text-slate-500">12 automation slots remaining.</p>
-          </Card>
+            <p className="text-[11px] text-gray-400">12 automation slots remaining.</p>
+          </div>
 
-          <Card className="space-y-3">
+          <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs space-y-3">
             <div className="flex justify-between text-xs font-semibold">
-              <span className="text-slate-300">Monthly Message Executions</span>
-              <span className="text-emerald-400">36,410 / 50,000</span>
+              <span className="text-gray-700">Monthly Message Executions</span>
+              <span className="text-[#16A34A] font-bold">36,410 / 50,000</span>
             </div>
-            <div className="h-2 rounded-full bg-slate-950 overflow-hidden border border-slate-800">
-              <div className="h-full bg-emerald-500 rounded-full" style={{ width: '72%' }} />
+            <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+              <div className="h-full bg-[#16A34A] rounded-full" style={{ width: '72%' }} />
             </div>
-            <p className="text-[11px] text-slate-500">Resets in 18 days.</p>
-          </Card>
+            <p className="text-[11px] text-gray-400">Resets in 18 days.</p>
+          </div>
         </div>
 
         {/* Invoice History */}
-        <Card className="space-y-4">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider">Billing Invoice History</h3>
+        <div className="bg-white rounded-2xl border border-gray-200/80 p-6 shadow-xs space-y-4">
+          <h3 className="text-sm font-bold text-gray-900">Billing Invoice History</h3>
           <div className="space-y-2 text-xs">
-            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+            <div className="p-3.5 bg-[#F8F9FA] rounded-xl border border-gray-200/80 flex items-center justify-between">
               <div>
-                <span className="font-bold text-slate-200">Invoice #INV-2026-08</span>
-                <span className="text-slate-500 block text-[10px]">Billed Aug 01, 2026</span>
+                <span className="font-bold text-gray-900">Invoice #INV-2026-08</span>
+                <span className="text-gray-400 block text-[10px]">Billed Aug 01, 2026</span>
               </div>
               <div className="flex items-center gap-4">
-                <span className="font-bold text-slate-100">$49.00 USD</span>
+                <span className="font-bold text-gray-900">$49.00 USD</span>
                 <Badge variant="success">PAID</Badge>
               </div>
             </div>
           </div>
-        </Card>
+        </div>
       </div>
     </AppShell>
   );

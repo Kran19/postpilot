@@ -15,13 +15,12 @@ import {
   Sparkles, 
   MessageSquare, 
   ShieldCheck, 
-  Sliders,
-  Send,
-  Zap
+  Sliders, 
+  Send, 
+  Zap 
 } from 'lucide-react';
 import { InstagramIcon, FacebookIcon } from '@/components/icons/SocialIcons';
 import { AppShell } from '@/components/layout/AppShell';
-import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -94,25 +93,26 @@ export default function AutomationBuilderPage() {
   };
 
   return (
-    <AppShell title="Workflow Builder" description="Interactive Visual Automation Flow Engine">
-      <div className="space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+    <AppShell title="Workflow Builder">
+      <div className="space-y-6">
+        {/* Top Header Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/80 shadow-xs">
           <div className="flex items-center gap-3">
             <Link href="/app/automations">
-              <Button variant="ghost" size="sm" iconOnly>
+              <Button variant="outline" size="sm" iconOnly aria-label="Back">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
             <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Workflow className="w-4 h-4 text-indigo-400" /> {ruleName}
+              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                <Workflow className="w-4 h-4 text-[#16A34A]" /> {ruleName}
               </h2>
-              <p className="text-xs text-slate-400">{description}</p>
+              <p className="text-xs text-gray-500">{description}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="secondary" size="sm" onClick={handleRunSimulation} leftIcon={<Play className="w-3.5 h-3.5 text-emerald-400" />}>
+            <Button variant="secondary" size="sm" onClick={handleRunSimulation} leftIcon={<Play className="w-3.5 h-3.5 text-[#16A34A]" />}>
               Dry-Run Test
             </Button>
             <Button variant="primary" size="sm" onClick={handleSaveRule} isLoading={isSaving} leftIcon={<Save className="w-3.5 h-3.5" />}>
@@ -121,18 +121,20 @@ export default function AutomationBuilderPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Node Diagram Editor (2 Cols) */}
+          <div className="lg:col-span-2 space-y-4">
+            {/* Node 1: Trigger */}
             <div className="relative">
-              <div className="p-6 bg-slate-900 border-2 border-indigo-500/50 rounded-2xl shadow-xl shadow-indigo-950/30 space-y-4">
+              <div className="p-6 bg-white border-2 border-gray-200 rounded-2xl shadow-xs space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#18181B] flex items-center justify-center text-white font-bold text-xs">
                       1
                     </div>
                     <div>
-                      <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block">TRIGGER NODE</span>
-                      <h4 className="text-sm font-bold text-white">Meta Webhook Ingestion</h4>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">TRIGGER NODE</span>
+                      <h4 className="text-sm font-bold text-gray-900">Meta Webhook Ingestion</h4>
                     </div>
                   </div>
                   <Badge variant={selectedChannel}>{selectedChannel.toUpperCase()}</Badge>
@@ -165,23 +167,25 @@ export default function AutomationBuilderPage() {
                 </div>
               </div>
 
-              <div className="flex justify-center my-3">
-                <div className="w-0.5 h-8 bg-indigo-500/40 relative">
-                  <div className="absolute bottom-0 -left-1 w-2.5 h-2.5 border-b-2 border-r-2 border-indigo-400 rotate-45" />
+              {/* Connecting Line */}
+              <div className="flex justify-center my-2.5">
+                <div className="w-0.5 h-6 bg-gray-300 relative">
+                  <div className="absolute bottom-0 -left-1 w-2 h-2 border-b-2 border-r-2 border-gray-400 rotate-45" />
                 </div>
               </div>
             </div>
 
+            {/* Node 2: Condition */}
             <div className="relative">
-              <div className="p-6 bg-slate-900 border-2 border-amber-500/40 rounded-2xl shadow-xl space-y-4">
+              <div className="p-6 bg-white border-2 border-[#FBDDBE] rounded-2xl shadow-xs space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-slate-950 font-bold text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#B45309] flex items-center justify-center text-white font-bold text-xs">
                       2
                     </div>
                     <div>
-                      <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block">CONDITION NODE</span>
-                      <h4 className="text-sm font-bold text-white">Rule Filter Matcher</h4>
+                      <span className="text-[10px] font-bold text-[#B45309] uppercase tracking-widest block">CONDITION NODE</span>
+                      <h4 className="text-sm font-bold text-gray-900">Rule Filter Matcher</h4>
                     </div>
                   </div>
                   <Badge variant="warning">IF MATCHES</Badge>
@@ -209,22 +213,24 @@ export default function AutomationBuilderPage() {
                 </div>
               </div>
 
-              <div className="flex justify-center my-3">
-                <div className="w-0.5 h-8 bg-amber-500/40 relative">
-                  <div className="absolute bottom-0 -left-1 w-2.5 h-2.5 border-b-2 border-r-2 border-amber-400 rotate-45" />
+              {/* Connecting Line */}
+              <div className="flex justify-center my-2.5">
+                <div className="w-0.5 h-6 bg-gray-300 relative">
+                  <div className="absolute bottom-0 -left-1 w-2 h-2 border-b-2 border-r-2 border-gray-400 rotate-45" />
                 </div>
               </div>
             </div>
 
-            <div className="p-6 bg-slate-900 border-2 border-emerald-500/40 rounded-2xl shadow-xl space-y-4">
+            {/* Node 3: Action */}
+            <div className="p-6 bg-white border-2 border-[#D1E8D7] rounded-2xl shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 font-bold text-xs">
+                  <div className="w-7 h-7 rounded-lg bg-[#16A34A] flex items-center justify-center text-white font-bold text-xs">
                     3
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest block">ACTION NODE</span>
-                    <h4 className="text-sm font-bold text-white">Outbound Meta Execution</h4>
+                    <span className="text-[10px] font-bold text-[#16A34A] uppercase tracking-widest block">ACTION NODE</span>
+                    <h4 className="text-sm font-bold text-gray-900">Outbound Meta Execution</h4>
                   </div>
                 </div>
                 <Badge variant="success">DISPATCH RESPONSE</Badge>
@@ -244,14 +250,14 @@ export default function AutomationBuilderPage() {
                 />
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Outbound DM Response Text Template
                   </label>
                   <textarea
                     rows={3}
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-lg text-sm p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-sans"
+                    className="w-full bg-[#F6F7F9] border border-gray-200/90 text-gray-900 rounded-xl text-xs p-3 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:bg-white font-sans"
                   />
                 </div>
 
@@ -264,11 +270,12 @@ export default function AutomationBuilderPage() {
             </div>
           </div>
 
-          <div className="space-y-6">
-            <Card className="p-6 space-y-4">
-              <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                <Sparkles className="w-4 h-4 text-indigo-400" />
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Dry-Run Execution Tester</h3>
+          {/* Right Simulation & Policy Panel */}
+          <div className="space-y-5">
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-xs space-y-4">
+              <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
+                <Sparkles className="w-4 h-4 text-[#16A34A]" />
+                <h3 className="text-sm font-bold text-gray-900">Dry-Run Execution Tester</h3>
               </div>
 
               <div className="space-y-3">
@@ -283,25 +290,25 @@ export default function AutomationBuilderPage() {
                   className="w-full"
                   isLoading={isSimulating}
                   onClick={handleRunSimulation}
-                  leftIcon={<Play className="w-4 h-4 text-emerald-400" />}
+                  leftIcon={<Play className="w-3.5 h-3.5 text-[#16A34A]" />}
                 >
                   Simulate Trigger Evaluation
                 </Button>
               </div>
 
               {simulationTrace && (
-                <div className="pt-4 border-t border-slate-800 space-y-3">
-                  <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                <div className="pt-4 border-t border-gray-100 space-y-2.5">
+                  <span className="text-xs font-bold text-gray-700 uppercase tracking-wider block">
                     Step-by-Step Audit Trace
                   </span>
                   <div className="space-y-2 font-mono text-[11px]">
                     {simulationTrace.map((t, idx) => (
                       <div
                         key={idx}
-                        className={`p-2.5 rounded-lg border flex items-center justify-between ${
+                        className={`p-2.5 rounded-xl border flex items-center justify-between ${
                           t.status === 'pass'
-                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                            : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                            ? 'bg-[#EAF5EE] border-[#D1E8D7] text-[#1E7E34]'
+                            : 'bg-rose-50 border-rose-200 text-rose-700'
                         }`}
                       >
                         <div>
@@ -315,16 +322,16 @@ export default function AutomationBuilderPage() {
                   </div>
                 </div>
               )}
-            </Card>
+            </div>
 
-            <Card className="p-6 space-y-3 bg-indigo-950/20 border-indigo-500/20">
-              <div className="flex items-center gap-2 text-indigo-300 font-bold text-xs">
-                <ShieldCheck className="w-4 h-4 text-indigo-400" /> Meta Graph API Compliance Check
+            <div className="p-5 rounded-2xl bg-[#EAF5EE] border border-[#D1E8D7] space-y-2">
+              <div className="flex items-center gap-2 text-[#1D3B2A] font-bold text-xs">
+                <ShieldCheck className="w-4 h-4 text-[#16A34A]" /> Meta Graph API Compliance Check
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                This rule strictly complies with Meta&apos;s 24-hour customer service messaging window. All outbound actions validate `X-Hub-Signature-256` HMAC signatures server-side.
+              <p className="text-xs text-[#1D3B2A]/80 leading-relaxed">
+                This rule strictly complies with Meta&apos;s 24-hour customer service messaging window. All outbound actions validate <code className="font-mono text-[11px] font-bold text-[#1D3B2A]">X-Hub-Signature-256</code> HMAC signatures server-side.
               </p>
-            </Card>
+            </div>
           </div>
         </div>
       </div>

@@ -24,6 +24,15 @@ export interface PolicyDecision {
 export class InstagramPolicy {
   private readonly logger = new Logger(InstagramPolicy.name);
 
+  validate24HourMessagingWindow(lastInteractionAt: Date = new Date()): { eligible: boolean; code: string; reason?: string } {
+    const result = this.evaluatePolicy({ actionType: 'INSTAGRAM_DM_RESPONSE', lastInteractionAt });
+    return {
+      eligible: result.allowed,
+      code: result.code,
+      reason: result.reason,
+    };
+  }
+
   evaluatePolicy(context: PolicyCheckContext): PolicyDecision {
     switch (context.actionType) {
       case 'INSTAGRAM_DM_RESPONSE':

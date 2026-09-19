@@ -27,14 +27,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer rounded-lg select-none';
+    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer rounded-xl select-none';
 
     const variantStyles = {
-      primary: 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-[0.98]',
-      secondary: 'bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 shadow-sm active:scale-[0.98]',
-      outline: 'border border-slate-700 hover:bg-slate-800/60 text-slate-200 active:scale-[0.98]',
-      ghost: 'text-slate-300 hover:bg-slate-800/50 hover:text-white',
-      danger: 'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-500/20 active:scale-[0.98]',
+      primary: 'bg-[#18181B] hover:bg-black text-white shadow-xs active:scale-[0.98]',
+      secondary: 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-200/80 shadow-2xs active:scale-[0.98]',
+      outline: 'border border-gray-200/80 hover:bg-gray-50 text-gray-700 active:scale-[0.98]',
+      ghost: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
+      danger: 'bg-rose-600 hover:bg-rose-500 text-white shadow-xs active:scale-[0.98]',
     };
 
     const sizeStyles = {

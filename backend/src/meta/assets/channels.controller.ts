@@ -40,7 +40,7 @@ export class ChannelsController {
       lastSyncedAt: a.lastSyncedAt.toISOString(),
       permissions: a.credential ? a.credential.scopes : [],
       tokenExpiresAt: a.credential?.expiresAt ? a.credential.expiresAt.toISOString() : null,
-      errorMessage: a.errorMessage,
+      errorMessage: null,
     }));
   }
 

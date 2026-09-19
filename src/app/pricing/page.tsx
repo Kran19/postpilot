@@ -2,73 +2,112 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Zap, CheckCircle2, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { Send, CheckCircle2, ArrowRight, Check } from 'lucide-react';
 import { MOCK_PLANS } from '@/lib/mock-data';
 
 export default function PricingPage() {
   const [isAnnual, setIsAnnual] = useState(true);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <div className="min-h-screen bg-[#F6F7F9] text-gray-900 selection:bg-[#1D3B2A] selection:text-white font-sans antialiased">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-gray-200/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white">
-              <Zap className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-black flex items-center justify-center text-white shadow-xs">
+              <Send className="w-4 h-4 fill-white -rotate-12 translate-x-0.5 -translate-y-0.5" />
             </div>
-            <span className="text-xl font-bold text-white">POSTPILOT</span>
+            <div>
+              <span className="text-lg font-bold tracking-tight text-gray-900 block leading-tight">PostPilot</span>
+              <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase block">Meta Social Automation</span>
+            </div>
           </Link>
           <div className="flex items-center gap-3">
-            <Link href="/login"><Button variant="ghost" size="sm">Log In</Button></Link>
-            <Link href="/register"><Button variant="primary" size="sm">Get Started</Button></Link>
+            <Link href="/login">
+              <button className="px-4 py-2 rounded-xl text-xs font-bold text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition cursor-pointer">
+                Log In
+              </button>
+            </Link>
+            <Link href="/register">
+              <button className="px-4 py-2 rounded-xl text-xs font-bold bg-black text-white hover:bg-gray-800 transition shadow-xs cursor-pointer">
+                Get Started
+              </button>
+            </Link>
           </div>
         </div>
       </header>
 
+      {/* Main Pricing Hero & Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-white">Flexible Plans Built for Every Scale</h1>
-        <p className="text-slate-400 mt-4 text-base max-w-2xl mx-auto">
-          Automate Instagram DMs, Facebook comments, WhatsApp Business API messages, and Threads engagement with zero hidden fees.
+        <span className="text-xs font-bold uppercase tracking-widest text-[#1E7E34] bg-[#EAF5EE] px-3 py-1 rounded-full inline-block mb-3">
+          Predictable Pricing
+        </span>
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight">
+          Flexible Plans Built for Every Scale
+        </h1>
+        <p className="text-gray-500 mt-4 text-base max-w-2xl mx-auto">
+          Automate Instagram DMs, Facebook comments, WhatsApp Cloud API messages, and Threads engagement with zero hidden fees.
         </p>
 
-        <div className="flex items-center justify-center gap-3 mt-10 mb-16">
-          <span className={!isAnnual ? 'text-white font-semibold text-sm' : 'text-slate-400 text-sm'}>Monthly Billing</span>
+        {/* Toggle */}
+        <div className="flex items-center justify-center gap-3 mt-10 mb-14">
+          <span className={!isAnnual ? 'text-gray-900 font-bold text-xs' : 'text-gray-500 text-xs'}>Monthly</span>
           <button
             onClick={() => setIsAnnual(!isAnnual)}
-            className="w-14 h-7 rounded-full bg-slate-800 border border-slate-700 p-1 flex items-center transition"
+            className="w-12 h-6 rounded-full bg-gray-200 p-1 flex items-center transition cursor-pointer"
           >
-            <div className={`w-5 h-5 rounded-full bg-indigo-500 transition-transform ${isAnnual ? 'translate-x-7' : 'translate-x-0'}`} />
+            <div className={`w-4 h-4 rounded-full bg-black transition-transform ${isAnnual ? 'translate-x-6' : 'translate-x-0'}`} />
           </button>
-          <span className={isAnnual ? 'text-white font-semibold text-sm' : 'text-slate-400 text-sm'}>
-            Annual Billing <span className="text-indigo-400 font-bold text-xs ml-1">(20% Discount)</span>
+          <span className={isAnnual ? 'text-gray-900 font-bold text-xs' : 'text-gray-500 text-xs'}>
+            Annual Billing <span className="text-[#16A34A] font-bold text-xs ml-1">(20% Discount)</span>
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-left">
+        {/* 4 Plans Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 text-left">
           {MOCK_PLANS.map((plan) => (
-            <Card key={plan.id} className={plan.isPopular ? 'border-indigo-500 shadow-xl shadow-indigo-500/10' : ''}>
-              <h3 className="text-lg font-bold text-white">{plan.name}</h3>
-              <p className="text-xs text-slate-400 mt-1 min-h-[36px]">{plan.description}</p>
-              <div className="my-6">
-                <span className="text-4xl font-extrabold text-white">${isAnnual ? plan.priceYearly : plan.priceMonthly}</span>
-                <span className="text-xs text-slate-400"> / mo</span>
+            <div 
+              key={plan.id}
+              className={`p-6 rounded-2xl border transition flex flex-col justify-between ${
+                plan.isPopular 
+                  ? 'border-gray-900 bg-white shadow-lg ring-1 ring-gray-900 relative' 
+                  : 'border-gray-200/90 bg-[#FAFAFA]'
+              }`}
+            >
+              {plan.isPopular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] uppercase font-bold tracking-wider px-3 py-0.5 rounded-full shadow-xs">
+                  Most Popular
+                </div>
+              )}
+              <div>
+                <h3 className="text-base font-bold text-gray-900">{plan.name}</h3>
+                <p className="text-xs text-gray-500 mt-1 min-h-[32px]">{plan.description}</p>
+                
+                <div className="my-5">
+                  <span className="text-3xl font-extrabold text-gray-900">${isAnnual ? plan.priceYearly : plan.priceMonthly}</span>
+                  <span className="text-xs text-gray-400"> / month</span>
+                </div>
+
+                <Link href="/register">
+                  <button className={`w-full py-2.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    plan.isPopular 
+                      ? 'bg-black text-white hover:bg-gray-800 shadow-xs' 
+                      : 'bg-white border border-gray-300 text-gray-800 hover:bg-gray-100'
+                  }`}>
+                    Get Started with {plan.name}
+                  </button>
+                </Link>
+
+                <ul className="mt-6 space-y-2.5 text-xs text-gray-600">
+                  {plan.features.map((feat, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A] shrink-0" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <Link href="/register">
-                <Button variant={plan.isPopular ? 'primary' : 'outline'} className="w-full">
-                  Get Started
-                </Button>
-              </Link>
-              <ul className="mt-8 space-y-3 text-xs text-slate-300">
-                {plan.features.map((f, idx) => (
-                  <li key={idx} className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </Card>
+            </div>
           ))}
         </div>
       </div>

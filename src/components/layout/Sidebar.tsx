@@ -4,146 +4,166 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  Zap, 
-  LayoutDashboard, 
-  Inbox, 
-  Bot, 
-  Share2, 
-  BarChart3, 
-  FileCode2, 
+  LayoutGrid, 
+  MessageSquare, 
+  BadgeCheck, 
   Users, 
+  Radio, 
+  BarChart2, 
+  FileText, 
+  ShieldAlert, 
   CreditCard, 
   Settings, 
-  Users2,
-  ChevronRight
+  Crown,
+  ChevronDown,
+  MoreVertical,
+  ArrowRight,
+  Send
 } from 'lucide-react';
-import { WorkspaceSwitcher } from './WorkspaceSwitcher';
 import { cn } from '@/lib/utils';
 
-interface NavGroup {
-  label: string;
-  items: {
-    name: string;
-    href: string;
-    icon: React.ElementType;
-    badge?: string;
-  }[];
+interface NavItem {
+  name: string;
+  href: string;
+  icon: React.ElementType;
+  badge?: string;
 }
 
-const NAV_GROUPS: NavGroup[] = [
-  {
-    label: 'OVERVIEW',
-    items: [
-      { name: 'Dashboard', href: '/app/dashboard', icon: LayoutDashboard },
-    ],
-  },
-  {
-    label: 'ENGAGE',
-    items: [
-      { name: 'Unified Inbox', href: '/app/inbox', icon: Inbox, badge: '3' },
-      { name: 'Automations', href: '/app/automations', icon: Bot },
-      { name: 'Contacts', href: '/app/contacts', icon: Users2 },
-    ],
-  },
-  {
-    label: 'CHANNELS',
-    items: [
-      { name: 'Integrations Hub', href: '/app/channels', icon: Share2 },
-    ],
-  },
-  {
-    label: 'INSIGHTS',
-    items: [
-      { name: 'Analytics', href: '/app/analytics', icon: BarChart3 },
-    ],
-  },
-  {
-    label: 'MANAGE',
-    items: [
-      { name: 'Message Templates', href: '/app/templates', icon: FileCode2 },
-      { name: 'Team & RBAC', href: '/app/team', icon: Users },
-      { name: 'Billing & Usage', href: '/app/billing', icon: CreditCard },
-    ],
-  },
-  {
-    label: 'SETTINGS',
-    items: [
-      { name: 'Workspace Settings', href: '/app/settings', icon: Settings },
-    ],
-  },
+const PRIMARY_NAV: NavItem[] = [
+  { name: 'Dashboard', href: '/app/dashboard', icon: LayoutGrid },
+  { name: 'Unified Inbox', href: '/app/inbox', icon: MessageSquare, badge: '3' },
+  { name: 'Automations', href: '/app/automations', icon: BadgeCheck },
+  { name: 'Contacts', href: '/app/contacts', icon: Users },
+  { name: 'Integrations', href: '/app/channels', icon: Radio },
+  { name: 'Analytics', href: '/app/analytics', icon: BarChart2 },
+];
+
+const SECONDARY_NAV: NavItem[] = [
+  { name: 'Message Templates', href: '/app/templates', icon: FileText },
+  { name: 'Team & Permissions', href: '/app/team', icon: Users },
+  { name: 'Billing & Usage', href: '/app/billing', icon: CreditCard },
+  { name: 'Settings', href: '/app/settings', icon: Settings },
 ];
 
 export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
   const pathname = usePathname();
 
   return (
-    <aside className={cn('w-64 bg-slate-950 border-r border-slate-800/80 flex flex-col justify-between p-4 h-screen sticky top-0 overflow-y-auto select-none', className)}>
-      <div className="space-y-6">
+    <aside className={cn('w-64 bg-white border-r border-gray-200/80 flex flex-col justify-between p-4 h-screen sticky top-0 overflow-y-auto select-none shadow-xs', className)}>
+      <div className="space-y-5">
         {/* Brand Header */}
-        <Link href="/app/dashboard" className="flex items-center gap-3 px-2">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-            <Zap className="w-5 h-5 fill-current" />
+        <Link href="/app/dashboard" className="flex items-center gap-3 px-2 pt-1">
+          <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center text-white shadow-xs">
+            <Send className="w-4 h-4 fill-white text-white -rotate-12 translate-x-0.5 -translate-y-0.5" />
           </div>
           <div>
-            <span className="text-lg font-bold tracking-tight text-white block">POSTPILOT</span>
-            <span className="text-[10px] font-bold text-indigo-400 tracking-wider uppercase block -mt-1">Commercial SaaS</span>
+            <span className="text-base font-bold tracking-tight text-gray-900 block leading-tight">PostPilot</span>
+            <span className="text-[11px] text-gray-400 block font-normal">Automate. Engage. Grow.</span>
           </div>
         </Link>
 
-        {/* Workspace Switcher */}
-        <WorkspaceSwitcher />
-
-        {/* Navigation Group items */}
-        <nav className="space-y-5">
-          {NAV_GROUPS.map((group) => (
-            <div key={group.label} className="space-y-1">
-              <div className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                {group.label}
-              </div>
-              {group.items.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={cn(
-                      'flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150',
-                      isActive
-                        ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-600/20'
-                        : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'
-                    )}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Icon className={cn('w-4 h-4', isActive ? 'text-white' : 'text-slate-400')} />
-                      <span>{item.name}</span>
-                    </div>
-                    {item.badge && (
-                      <span className={cn(
-                        'px-1.5 py-0.2 rounded-full text-[10px] font-bold',
-                        isActive ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
-                      )}>
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
+        {/* Workspace Switcher Card */}
+        <div className="bg-white border border-gray-200/90 rounded-xl p-2.5 flex items-center justify-between shadow-xs hover:border-gray-300 transition cursor-pointer">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-[#2D3B34] text-white flex items-center justify-center font-bold text-xs shrink-0">
+              A
             </div>
-          ))}
+            <div className="truncate">
+              <h4 className="text-xs font-bold text-gray-900 truncate leading-tight">Acme Brand Studio</h4>
+              <p className="text-[10px] text-gray-400 truncate">Pro Plan</p>
+            </div>
+          </div>
+          <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+        </div>
+
+        {/* Primary Navigation */}
+        <nav className="space-y-1">
+          {PRIMARY_NAV.map((item) => {
+            const isActive = pathname === item.href || (item.href !== '/app/dashboard' && pathname.startsWith(`${item.href}`));
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  'flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-colors',
+                  isActive
+                    ? 'bg-[#E3ECE6] text-[#1D3B2A] font-semibold'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className={cn('w-4 h-4', isActive ? 'text-[#1D3B2A]' : 'text-gray-500')} />
+                  <span>{item.name}</span>
+                </div>
+                {item.badge && (
+                  <span className="w-5 h-5 rounded-full bg-[#16A34A] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+
+          <div className="pt-3 pb-1">
+            <div className="border-t border-gray-100" />
+          </div>
+
+          {SECONDARY_NAV.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}`);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  'flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-colors',
+                  isActive
+                    ? 'bg-[#E3ECE6] text-[#1D3B2A] font-semibold'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className={cn('w-4 h-4', isActive ? 'text-[#1D3B2A]' : 'text-gray-500')} />
+                  <span>{item.name}</span>
+                </div>
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
-      {/* User Profile Footer */}
-      <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between px-2">
-        <div className="flex items-center gap-2.5 truncate">
-          <div className="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-300 shrink-0">
-            AM
+      <div className="space-y-4 pt-4">
+        {/* Upgrade to Enterprise Card */}
+        <div className="bg-[#FAF7F2] border border-[#EAE5D8] rounded-2xl p-4 shadow-xs">
+          <Crown className="w-4 h-4 text-[#A1711C] mb-2 fill-[#A1711C]" />
+          <h5 className="text-xs font-bold text-gray-900">Upgrade to Enterprise</h5>
+          <p className="text-[10px] text-gray-500 mt-0.5 leading-normal">
+            More channels. More power. More growth.
+          </p>
+          <Link
+            href="/app/billing"
+            className="mt-3 w-full bg-[#1D3B2A] hover:bg-[#162F22] text-white text-xs font-semibold py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition shadow-xs"
+          >
+            <span>Upgrade Plan</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {/* User Profile Footer */}
+        <div className="pt-2 border-t border-gray-100 flex items-center justify-between px-1">
+          <div className="flex items-center gap-2.5 truncate">
+            <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center shrink-0">
+              AM
+            </div>
+            <div className="truncate">
+              <h5 className="text-xs font-bold text-gray-900 truncate">Alex Morgan</h5>
+              <p className="text-[10px] text-gray-400 truncate">alex@acmestudio.io</p>
+            </div>
           </div>
-          <div className="truncate">
-            <h5 className="text-xs font-bold text-slate-200 truncate">Alex Morgan</h5>
-            <p className="text-[10px] text-slate-400 truncate">alex@acmestudio.io</p>
-          </div>
+          <button className="text-gray-400 hover:text-gray-600 p-1" aria-label="Account Settings">
+            <MoreVertical className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </aside>

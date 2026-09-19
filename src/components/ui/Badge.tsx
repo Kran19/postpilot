@@ -22,16 +22,16 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   const variantStyles = {
-    default: 'bg-slate-800 text-slate-300 border-slate-700',
-    success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    warning: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    error: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-    info: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
-    outline: 'border-slate-700 text-slate-300 bg-transparent',
-    instagram: 'bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 text-pink-300 border-pink-500/30',
-    facebook: 'bg-blue-600/15 text-blue-400 border-blue-500/30',
-    whatsapp: 'bg-emerald-600/15 text-emerald-300 border-emerald-500/30',
-    threads: 'bg-slate-700/50 text-slate-200 border-slate-600',
+    default: 'bg-gray-100 text-gray-800 border-gray-200',
+    success: 'bg-[#EAF5EE] text-[#1E7E34] border-[#D1E8D7]',
+    warning: 'bg-[#FEF6EE] text-[#B45309] border-[#FBDDBE]',
+    error: 'bg-[#FDF2F2] text-[#DC2626] border-[#F8D7D7]',
+    info: 'bg-sky-50 text-sky-700 border-sky-200',
+    outline: 'border-gray-200 text-gray-700 bg-transparent',
+    instagram: 'bg-pink-50 text-pink-700 border-pink-200',
+    facebook: 'bg-blue-50 text-blue-700 border-blue-200',
+    whatsapp: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    threads: 'bg-gray-900 text-white border-gray-900',
   };
 
   return (

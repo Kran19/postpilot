@@ -3,48 +3,49 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ShieldCheck, Lock, Key, Activity } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
 
 export default function SecurityPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F6F7F9] text-gray-900 py-12 px-4 sm:px-6 lg:px-8 font-sans antialiased selection:bg-[#1D3B2A] selection:text-white">
       <div className="max-w-4xl mx-auto space-y-8">
         <Link href="/">
-          <Button variant="ghost" size="sm" leftIcon={<ArrowLeft className="w-4 h-4" />}>
-            Back to Home
-          </Button>
+          <button className="px-3.5 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Home</span>
+          </button>
         </Link>
 
-        <div className="border-b border-slate-800 pb-6 space-y-2">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-indigo-400" />
-            <span className="text-xs font-mono text-indigo-400 uppercase tracking-widest">Enterprise SaaS Architecture</span>
+        <div className="bg-white p-8 rounded-2xl border border-gray-200/90 shadow-sm space-y-6">
+          <div className="border-b border-gray-100 pb-6 space-y-2">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-[#16A34A]" />
+              <span className="text-xs font-bold text-[#1E7E34] uppercase tracking-wider">Enterprise Architecture</span>
+            </div>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Security & Encryption Infrastructure</h1>
+            <p className="text-xs text-gray-400">Zero-Trust Architecture • AES-256 Token Encryption • HMAC SHA-256 Webhook Verification</p>
           </div>
-          <h1 className="text-3xl font-extrabold text-white">Security & Encryption Infrastructure</h1>
-          <p className="text-xs text-slate-400">Zero-Trust Architecture • AES-256 Token Encryption • HMAC SHA-256 Webhook Verification</p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-              <Lock className="w-5 h-5" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="p-5 rounded-xl bg-[#FAFAFA] border border-gray-200/90 space-y-2.5">
+              <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center justify-center">
+                <Lock className="w-4 h-4" />
+              </div>
+              <h3 className="text-sm font-bold text-gray-900">Encrypted Credential Storage</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Meta OAuth access tokens are encrypted at rest using AES-256-GCM. Decryption keys are isolated from browser contexts.
+              </p>
             </div>
-            <h3 className="text-base font-bold text-white">Encrypted Credential Storage</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Meta OAuth access tokens are encrypted at rest using AES-256-GCM. Decryption keys are rotated periodically via KMS and isolated from browser contexts.
-            </p>
-          </Card>
 
-          <Card className="space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Activity className="w-5 h-5" />
+            <div className="p-5 rounded-xl bg-[#FAFAFA] border border-gray-200/90 space-y-2.5">
+              <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center">
+                <Activity className="w-4 h-4" />
+              </div>
+              <h3 className="text-sm font-bold text-gray-900">HMAC Signature Validation</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Incoming webhooks from Meta Graph API validate the <code className="text-emerald-700 font-mono text-[11px] bg-emerald-100/60 px-1 py-0.5 rounded">X-Hub-Signature-256</code> header prior to queue processing.
+              </p>
             </div>
-            <h3 className="text-base font-bold text-white">HMAC Signature Validation</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Incoming webhooks from Meta Graph API validate the <code className="text-emerald-300 font-mono">X-Hub-Signature-256</code> header prior to queue processing.
-            </p>
-          </Card>
+          </div>
         </div>
       </div>
     </div>
