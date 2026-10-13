@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutGrid, 
   MessageSquare, 
@@ -23,7 +23,8 @@ import {
   Sparkles,
   GitBranch,
   Sliders,
-  PhoneCall
+  PhoneCall,
+  LogOut
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -65,6 +66,8 @@ let cachedSidebarScroll = 0;
 
 export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const asideRef = React.useRef<HTMLElement | null>(null);
 
   // Restore scroll position on initial load and after pathname navigation
@@ -258,19 +261,70 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
         </div>
 
         {/* User Profile Footer */}
-        <div className="pt-2 border-t border-gray-100 flex items-center justify-between px-1">
-          <div className="flex items-center gap-2.5 truncate">
-            <div className="w-7 h-7 rounded-full bg-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center shrink-0">
-              AM
+        <div className="pt-2 border-t border-gray-100 relative">
+          <div 
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="flex items-center justify-between px-2 py-1.5 rounded-xl hover:bg-gray-100/80 transition cursor-pointer select-none"
+          >
+            <div className="flex items-center gap-2.5 truncate">
+              <div className="w-7 h-7 rounded-full bg-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center shrink-0">
+                AM
+              </div>
+              <div className="truncate">
+                <h5 className="text-xs font-bold text-gray-900 truncate">Alex Morgan</h5>
+                <p className="text-[10px] text-gray-400 truncate">alex@acmestudio.io</p>
+              </div>
             </div>
-            <div className="truncate">
-              <h5 className="text-xs font-bold text-gray-900 truncate">Alex Morgan</h5>
-              <p className="text-[10px] text-gray-400 truncate">alex@acmestudio.io</p>
-            </div>
+            <button className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer" aria-label="Account Settings">
+              <MoreVertical className="w-3.5 h-3.5" />
+            </button>
           </div>
-          <button className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer" aria-label="Account Settings">
-            <MoreVertical className="w-3.5 h-3.5" />
-          </button>
+
+          {/* User Menu Dropdown with Log Out */}
+          {showUserMenu && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
+              <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200/90 rounded-2xl shadow-xl z-50 p-1.5 space-y-1 animate-in fade-in zoom-in-95 duration-100">
+                <div className="px-3 py-2 border-b border-gray-100">
+                  <p className="text-xs font-bold text-gray-900">Alex Morgan</p>
+                  <p className="text-[10px] text-gray-500 truncate">alex@acmestudio.io</p>
+                </div>
+                <Link
+                  href="/app/settings"
+                  scroll={false}
+                  onClick={() => { setShowUserMenu(false); handleLinkClick(); }}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition"
+                >
+                  <Settings className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Account Settings</span>
+                </Link>
+                <Link
+                  href="/app/team"
+                  scroll={false}
+                  onClick={() => { setShowUserMenu(false); handleLinkClick(); }}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition"
+                >
+                  <Users className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Team & Members</span>
+                </Link>
+                <div className="border-t border-gray-100 my-1" />
+                <button
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    try {
+                      localStorage.clear();
+                      sessionStorage.clear();
+                    } catch {}
+                    router.push('/login');
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-rose-600 hover:bg-rose-50 transition cursor-pointer font-semibold text-left"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                  <span>Log Out</span>
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </aside>

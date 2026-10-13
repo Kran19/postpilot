@@ -2,20 +2,27 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Search, 
   Bell, 
   Plus, 
   Calendar,
   Menu,
-  X
+  X,
+  LogOut,
+  Settings,
+  User,
+  ChevronDown
 } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 
 export const Header: React.FC<{ title?: string; description?: string }> = ({
   title = 'Dashboard',
 }) => {
+  const router = useRouter();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileDrawer, setShowMobileDrawer] = useState(false);
 
   return (
@@ -88,6 +95,55 @@ export const Header: React.FC<{ title?: string; description?: string }> = ({
             <span>New Automation</span>
           </button>
         </Link>
+
+        {/* User Profile Menu */}
+        <div className="relative">
+          <button
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-gray-100 transition cursor-pointer select-none"
+            aria-label="User menu"
+          >
+            <div className="w-7 h-7 rounded-full bg-gray-900 text-white font-bold text-xs flex items-center justify-center shrink-0">
+              AM
+            </div>
+            <ChevronDown className="w-3.5 h-3.5 text-gray-500 hidden sm:block" />
+          </button>
+
+          {showUserMenu && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
+              <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200/90 rounded-2xl shadow-xl z-50 p-1.5 space-y-1 animate-in fade-in zoom-in-95 duration-100">
+                <div className="px-3 py-2 border-b border-gray-100">
+                  <p className="text-xs font-bold text-gray-900">Alex Morgan</p>
+                  <p className="text-[10px] text-gray-400 truncate">alex@acmestudio.io</p>
+                </div>
+                <Link
+                  href="/app/settings"
+                  onClick={() => setShowUserMenu(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition"
+                >
+                  <Settings className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Account Settings</span>
+                </Link>
+                <div className="border-t border-gray-100 my-1" />
+                <button
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    try {
+                      localStorage.clear();
+                      sessionStorage.clear();
+                    } catch {}
+                    router.push('/login');
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-rose-600 hover:bg-rose-50 transition cursor-pointer font-semibold text-left"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                  <span>Log Out</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Mobile Drawer */}
