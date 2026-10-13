@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: postpilot-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postpilot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postpilot_secure_pass_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-postpilot_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postpilot} -d ${POSTGRES_DB:-postpilot_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache & Queue Manager
+  redis:
+    image: redis:7-alpine
+    container_name: postpilot-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # NestJS Backend API & Webhook Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: postpilot-backend
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postpilot}:${POSTGRES_PASSWORD:-postpilot_secure_pass_2026}@postgres:5432/${POSTGRES_DB:-postpilot_db}?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      META_APP_ID: ${META_APP_ID:-18105300716110840}
+      META_APP_SECRET: ${META_APP_SECRET}
+      META_VERIFY_TOKEN: ${META_VERIFY_TOKEN:-postpilot_webhook_verification_token_secure}
+      META_API_VERSION: ${META_API_VERSION:-v21.0}
+      META_REDIRECT_URI: https://postpilot.vardaansmartsolutions.com/app/channels
+      JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_key_2026_postpilot}
+      APP_URL: https://postpilot.vardaansmartsolutions.com
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+
+  # Next.js Frontend Web Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: postpilot-frontend
+    restart: always
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: https://postpilot.vardaansmartsolutions.com/api/v1
+      NEXT_PUBLIC_APP_URL: https://postpilot.vardaansmartsolutions.com
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+  # Nginx Reverse Proxy (Domain: postpilot.vardaansmartsolutions.com)
+  nginx:
+    image: nginx:alpine
+    container_name: postpilot-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:

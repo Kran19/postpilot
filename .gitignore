@@ -2,6 +2,7 @@
 
 # Dependencies
 /node_modules
+/frontend/node_modules
 /backend/node_modules
 /.pnp
 .pnp.*
@@ -17,7 +18,9 @@
 
 # Next.js & Frontend Build Outputs
 /.next/
+/frontend/.next/
 /out/
+/frontend/out/
 /build
 
 # NestJS & Backend Build Outputs
@@ -27,6 +30,7 @@
 
 # Prisma
 /prisma/client
+/backend/prisma/client
 *.sqlite
 *.sqlite-journal
 
@@ -34,6 +38,7 @@
 .env
 .env*
 !.env.example
+!.env.docker.example
 
 # Debug & Logs
 npm-debug.log*
