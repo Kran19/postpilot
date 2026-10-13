@@ -1,0 +1,93 @@
+version: '3.8'
+
+# ==============================================================================
+# POSTPILOT LOCAL DEVELOPMENT DOCKER STACK
+# Ports:
+#   - Frontend Web: http://localhost:3000
+#   - Backend API:  http://localhost:4000
+#   - PostgreSQL:   localhost:5432
+#   - Redis:        localhost:6379
+# ==============================================================================
+
+services:
+  # Local PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: postpilot-local-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postpilot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postpilot_secure_pass_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-postpilot_db}
+    volumes:
+      - postgres_local_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postpilot} -d ${POSTGRES_DB:-postpilot_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Local Redis Cache & Queues
+  redis:
+    image: redis:7-alpine
+    container_name: postpilot-local-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_local_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Local NestJS Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: postpilot-local-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postpilot}:${POSTGRES_PASSWORD:-postpilot_secure_pass_2026}@postgres:5432/${POSTGRES_DB:-postpilot_db}?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      META_APP_ID: ${META_APP_ID:-18105300716110840}
+      META_APP_SECRET: ${META_APP_SECRET}
+      META_VERIFY_TOKEN: ${META_VERIFY_TOKEN:-postpilot_webhook_verification_token_secure}
+      META_API_VERSION: ${META_API_VERSION:-v21.0}
+      META_REDIRECT_URI: http://localhost:3000/app/channels
+      JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_key_2026_postpilot}
+      APP_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+
+  # Local Next.js Frontend Web Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: postpilot-local-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_local_data:
+  redis_local_data:
