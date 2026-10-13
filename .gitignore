@@ -67,4 +67,7 @@ Thumbs.db
 
 # Misc
 *.pem
+*.mp4
+*.webm
 next-env.d.ts
+
