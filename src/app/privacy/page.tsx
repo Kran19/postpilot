@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
             <section className="space-y-2">
               <h2 className="text-base font-bold text-gray-900">1. Data Ingestion & Meta API Scopes</h2>
               <p>
-                PostPilot accesses user data strictly via Meta Graph API and WhatsApp Business Platform API upon explicit user OAuth consent. We request only required permissions (<code className="text-indigo-600 font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">instagram_manage_messages</code>, <code className="text-indigo-600 font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">pages_messaging</code>, <code className="text-indigo-600 font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">whatsapp_business_messaging</code>).
+                Empeor Smart Solutions accesses user data strictly via Meta Graph API and WhatsApp Business Platform API upon explicit user OAuth consent. We request only required permissions (<code className="text-indigo-600 font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">instagram_manage_messages</code>, <code className="text-indigo-600 font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">pages_messaging</code>, <code className="text-indigo-600 font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">whatsapp_business_messaging</code>).
               </p>
             </section>
 

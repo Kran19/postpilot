@@ -25,13 +25,13 @@ export default function TermsOfServicePage() {
             <section className="space-y-2">
               <h2 className="text-base font-bold text-gray-900">1. Multi-Tenant SaaS Agreement</h2>
               <p>
-                By accessing PostPilot, you agree to comply with Meta Platform Terms, Developer Policies, and Commercial SaaS Terms of Service.
+                By accessing Empeor Smart Solutions, you agree to comply with Meta Platform Terms, Developer Policies, and Commercial SaaS Terms of Service.
               </p>
             </section>
             <section className="space-y-2">
               <h2 className="text-base font-bold text-gray-900">2. Acceptable Messaging Use</h2>
               <p>
-                PostPilot strictly prohibits spam, unauthorized broadcasting, or violation of Meta 24-hour customer messaging policy rules.
+                Empeor Smart Solutions strictly prohibits spam, unauthorized broadcasting, or violation of Meta 24-hour customer messaging policy rules.
               </p>
             </section>
           </div>

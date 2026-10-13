@@ -29,14 +29,14 @@ export default function ChannelsPage() {
   const [isConnecting, setIsConnecting] = useState(false);
 
   useEffect(() => {
-    channelService.getConnectedAssets('ws-acme').then(setAssets);
+    channelService.getConnectedAssets('empeor-smart-solutions').then(setAssets);
   }, []);
 
   const handleConnect = (e: React.FormEvent) => {
     e.preventDefault();
     setIsConnecting(true);
     setTimeout(() => {
-      channelService.connectChannel('ws-acme', selectedChannel, `${selectedChannel.toUpperCase()} Asset`, handle).then((newAsset) => {
+      channelService.connectChannel('empeor-smart-solutions', selectedChannel, `${selectedChannel.toUpperCase()} Asset`, handle).then((newAsset) => {
         setAssets((prev) => [...prev, newAsset]);
         setIsConnecting(false);
         setIsModalOpen(false);

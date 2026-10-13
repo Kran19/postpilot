@@ -120,12 +120,12 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
         {/* Workspace Switcher Card */}
         <div className="bg-white border border-gray-200/90 rounded-xl p-2.5 flex items-center justify-between shadow-xs hover:border-gray-300 transition cursor-pointer">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-7 h-7 rounded-lg bg-[#2D3B34] text-white flex items-center justify-center font-bold text-xs shrink-0">
-              A
+            <div className="w-7 h-7 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shrink-0">
+              E
             </div>
             <div className="truncate">
-              <h4 className="text-xs font-bold text-gray-900 truncate leading-tight">Acme Brand Studio</h4>
-              <p className="text-[10px] text-gray-400 truncate">Pro Plan</p>
+              <h4 className="text-xs font-bold text-gray-900 truncate leading-tight">Empeor Smart Solutions</h4>
+              <p className="text-[10px] text-gray-400 truncate">Enterprise Plan</p>
             </div>
           </div>
           <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />

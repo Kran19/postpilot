@@ -5,7 +5,16 @@ import { PrismaService } from '../prisma/prisma.service';
 export class AnalyticsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getOverview(workspaceId: string) {
+  async getOverview(workspaceIdParam: string) {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(workspaceIdParam);
+    let workspaceId = workspaceIdParam;
+    if (!isUuid) {
+      const ws = await this.prisma.workspace.findFirst({
+        where: { OR: [{ slug: workspaceIdParam }, { name: { contains: workspaceIdParam, mode: 'insensitive' } }] },
+      }) || await this.prisma.workspace.findFirst();
+      if (ws) workspaceId = ws.id;
+    }
+
     const totalExecutions = await this.prisma.automationExecution.count({
       where: { workspaceId },
     });

@@ -46,6 +46,18 @@ export const MOCK_WORKSPACES: Workspace[] = [
 
 export const MOCK_CONNECTED_ASSETS: ConnectedAsset[] = [
   {
+    id: 'asset-ig-karan',
+    workspaceId: 'ws-acme',
+    channel: 'instagram',
+    name: 'Karan Speak Official',
+    handleOrNumber: '@karanspeak07',
+    status: 'connected',
+    lastSyncedAt: 'Live (Verified)',
+    permissions: ['instagram_basic', 'instagram_manage_messages', 'instagram_manage_comments'],
+    followerCount: 14200,
+    tokenExpiresAt: '2026-12-31',
+  },
+  {
     id: 'asset-ig-acme',
     workspaceId: 'ws-acme',
     channel: 'instagram',
@@ -258,6 +270,36 @@ export const MOCK_EXECUTION_LOGS: ExecutionLog[] = [
 ];
 
 export const MOCK_CONVERSATIONS: Conversation[] = [
+  {
+    id: 'conv-real-karan-1',
+    workspaceId: 'ws-acme',
+    channel: 'instagram',
+    customer: {
+      id: 'cust-987654321',
+      name: 'IG Customer (Lead)',
+      handle: '@user_4321',
+      channel: 'instagram',
+      tags: ['Instagram Lead', 'Live Webhook'],
+      totalMessages: 1,
+      lastInteractionAt: 'Just now',
+    },
+    lastMessage: 'Hello Karan! Does Empeor Smart Solutions offer Instagram automation services?',
+    lastMessageAt: '2026-10-12T15:10:00Z',
+    unread: true,
+    status: 'open',
+    tags: ['Instagram Lead', 'Empeor Solutions'],
+    messages: [
+      {
+        id: 'm-live-1',
+        conversationId: 'conv-real-karan-1',
+        sender: 'customer',
+        senderName: 'IG Customer',
+        text: 'Hello Karan! Does Empeor Smart Solutions offer Instagram automation services?',
+        timestamp: 'Just now',
+        channel: 'instagram',
+      },
+    ],
+  },
   {
     id: 'conv-1',
     workspaceId: 'ws-acme',

@@ -14,8 +14,17 @@ export class ChannelsController {
 
   @Get()
   async getConnectedAssets(@Param('wsId') wsId: string) {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(wsId);
+    let targetWorkspaceId = wsId;
+    if (!isUuid) {
+      const ws = await this.prisma.workspace.findFirst({
+        where: { OR: [{ slug: wsId }, { name: { contains: wsId, mode: 'insensitive' } }] },
+      }) || await this.prisma.workspace.findFirst();
+      if (ws) targetWorkspaceId = ws.id;
+    }
+
     const assets = await this.prisma.connectedAsset.findMany({
-      where: { workspaceId: wsId },
+      where: { workspaceId: targetWorkspaceId },
       include: {
         credential: {
           select: {

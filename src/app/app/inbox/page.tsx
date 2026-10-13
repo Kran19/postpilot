@@ -49,7 +49,7 @@ export default function UnifiedInboxPage() {
   const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
 
   useEffect(() => {
-    inboxService.getConversations('ws-acme').then((data) => {
+    inboxService.getConversations('empeor-smart-solutions').then((data) => {
       setConversations(data);
       if (data.length > 0) setSelectedConvId(data[0].id);
     });
@@ -68,11 +68,20 @@ export default function UnifiedInboxPage() {
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!replyInput.trim()) return;
+    if (!replyInput.trim() || !activeConv) return;
     setIsSending(true);
-    inboxService.sendMessage(activeConv.id, replyInput, 'Alex Morgan').then((newMsg) => {
+    inboxService.sendMessage(activeConv.id, replyInput, 'Alex Morgan', 'empeor-smart-solutions').then((newMsg) => {
       setConversations((prev) =>
-        prev.map((c) => (c.id === activeConv.id ? { ...c, messages: [...c.messages, newMsg] } : c))
+        prev.map((c) => {
+          if (c.id !== activeConv.id) return c;
+          const exists = c.messages.some((m) => m.id === newMsg.id);
+          return {
+            ...c,
+            lastMessage: newMsg.text,
+            lastMessageAt: new Date().toISOString(),
+            messages: exists ? c.messages : [...c.messages, newMsg],
+          };
+        })
       );
       setReplyInput('');
       setIsSending(false);
@@ -308,13 +317,13 @@ export default function UnifiedInboxPage() {
 
             {/* Message Thread Canvas with Soft Pattern & Colored Message Bubbles */}
             <div className="flex-1 overflow-y-auto space-y-3.5 p-3.5 sm:p-4 bg-gradient-to-b from-[#E2E8F0]/40 via-[#F1F5F9]/60 to-[#E2E8F0]/40 rounded-2xl border border-slate-200 shadow-inner">
-              {activeConv.messages.map((msg) => {
+              {activeConv.messages.map((msg, idx) => {
                 const isCustomer = msg.sender === 'customer';
                 const isBot = msg.sender === 'bot';
 
                 return (
                   <div
-                    key={msg.id}
+                    key={`${msg.id || 'msg'}-${idx}`}
                     className={`flex flex-col ${isCustomer ? 'items-start' : 'items-end'}`}
                   >
                     <div className="flex items-center gap-1.5 mb-1 text-[10px] text-slate-500">

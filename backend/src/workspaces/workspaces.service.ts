@@ -37,8 +37,11 @@ export class WorkspacesService {
   }
 
   async getWorkspaceById(workspaceId: string) {
-    const workspace = await this.prisma.workspace.findUnique({
-      where: { id: workspaceId },
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(workspaceId);
+    let workspace = await this.prisma.workspace.findFirst({
+      where: isUuid
+        ? { id: workspaceId }
+        : { OR: [{ slug: workspaceId }, { name: { contains: workspaceId, mode: 'insensitive' } }] },
       include: {
         members: {
           include: {
@@ -61,6 +64,32 @@ export class WorkspacesService {
         },
       },
     });
+
+    if (!workspace) {
+      workspace = await this.prisma.workspace.findFirst({
+        include: {
+          members: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  fullName: true,
+                  avatarUrl: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              connectedAssets: true,
+              automations: true,
+              conversations: true,
+            },
+          },
+        },
+      });
+    }
 
     if (!workspace) {
       throw new NotFoundException(`Workspace ${workspaceId} not found`);

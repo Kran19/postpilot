@@ -14,7 +14,16 @@ export interface CreateAutomationRuleDto {
 export class AutomationsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getWorkspaceAutomations(workspaceId: string) {
+  async getWorkspaceAutomations(workspaceIdParam: string) {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(workspaceIdParam);
+    let workspaceId = workspaceIdParam;
+    if (!isUuid) {
+      const ws = await this.prisma.workspace.findFirst({
+        where: { OR: [{ slug: workspaceIdParam }, { name: { contains: workspaceIdParam, mode: 'insensitive' } }] },
+      }) || await this.prisma.workspace.findFirst();
+      if (ws) workspaceId = ws.id;
+    }
+
     const rules = await this.prisma.automation.findMany({
       where: { workspaceId },
       include: {

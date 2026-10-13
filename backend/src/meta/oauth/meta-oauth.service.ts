@@ -23,7 +23,9 @@ export class MetaOauthService {
   }
 
   generateOAuthUrl(workspaceId: string): string {
-    const redirectUri = `${this.configService.get<string>('API_URL')}/api/v1/workspaces/${workspaceId}/channels/oauth/callback`;
+    const redirectUri =
+      this.configService.get<string>('META_REDIRECT_URI') ||
+      `${this.configService.get<string>('APP_URL') || 'http://localhost:3000'}/app/channels`;
     const scopes = [
       'instagram_basic',
       'instagram_manage_messages',

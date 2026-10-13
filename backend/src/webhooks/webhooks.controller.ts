@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Body, Headers, HttpCode, HttpStatus, Req } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, Headers, HttpCode, HttpStatus, Req, Header } from '@nestjs/common';
 import { Request } from 'express';
 import { WebhooksService } from './webhooks.service';
 
@@ -7,6 +7,7 @@ export class WebhooksController {
   constructor(private readonly webhooksService: WebhooksService) {}
 
   @Get()
+  @Header('Content-Type', 'text/plain')
   verifySubscription(
     @Query('hub.mode') mode: string,
     @Query('hub.verify_token') token: string,
