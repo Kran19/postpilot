@@ -12,8 +12,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-postpilot_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postpilot} -d ${POSTGRES_DB:-postpilot_db}"]
       interval: 10s
@@ -25,8 +23,6 @@ services:
     image: redis:7-alpine
     container_name: postpilot-redis
     restart: always
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -61,7 +57,7 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "4000:4000"
+      - "127.0.0.1:4015:4000"
 
   # Next.js Frontend Web Application
   frontend:
@@ -77,21 +73,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "3000:3000"
-
-  # Nginx Reverse Proxy (Domain: postpilot.vardaansmartsolutions.com)
-  nginx:
-    image: nginx:alpine
-    container_name: postpilot-nginx
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - frontend
-      - backend
+      - "127.0.0.1:3015:3000"
 
 volumes:
   postgres_data:
