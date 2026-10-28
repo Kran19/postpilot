@@ -61,6 +61,7 @@ export class ChannelsController {
 
   @Post('oauth/callback')
   async handleCallback(@Param('wsId') wsId: string, @Body('code') code: string) {
-    return this.metaOauthService.handleOAuthCallback(wsId, code || 'simulated_meta_auth_code_9812');
+    return this.metaOauthService.handleOAuthCallback(wsId, code);
   }
 }
+

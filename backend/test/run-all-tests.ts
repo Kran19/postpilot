@@ -13,6 +13,7 @@ function runAllHardeningAudits() {
     { name: 'Meta Action-Specific Policy Matrix (10 Checks)', path: 'backend/test/action-policy-matrix.spec.ts' },
     { name: 'OAuth State Security & CSRF (5 Checks)', path: 'backend/test/oauth-state-security.spec.ts' },
     { name: 'Asset Discovery & Idempotency (3 Checks)', path: 'backend/test/asset-discovery-idempotency.spec.ts' },
+    { name: 'Meta Review Rejection Remediation (11 Checks)', path: 'backend/test/meta-review-remediation.spec.ts' },
   ];
 
   let totalSuitesPassed = 0;

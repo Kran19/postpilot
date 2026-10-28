@@ -1,9 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Optional, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CredentialsService } from '../meta/credentials/credentials.service';
 
 @Injectable()
 export class ConversationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(ConversationsService.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() private readonly credentialsService?: CredentialsService,
+  ) {}
 
   private async resolveWorkspaceId(workspaceId: string): Promise<string> {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -107,12 +113,27 @@ export class ConversationsService {
     if (conv.channel === 'instagram') {
       const recipientIdentity = conv.contact.identities.find((i) => i.channel === 'instagram');
       const recipientId = recipientIdentity ? recipientIdentity.externalUserId : null;
-      if (recipientId && process.env.INSTAGRAM_TEST_ACCESS_TOKEN) {
+
+      let token = process.env.INSTAGRAM_TEST_ACCESS_TOKEN || '';
+      if (this.credentialsService && conv.connectedAssetId) {
         try {
-          await fetch('https://graph.instagram.com/v21.0/me/messages', {
+          const decrypted = await this.credentialsService.getDecryptedToken(conv.connectedAssetId);
+          if (decrypted) token = decrypted;
+        } catch (e: any) {
+          this.logger.warn(`Could not load decrypted token for asset ${conv.connectedAssetId}: ${e.message}`);
+        }
+      }
+
+      if (recipientId && token && (token.startsWith('EAA') || token.startsWith('IGA'))) {
+        try {
+          const endpoint = token.startsWith('IGA')
+            ? 'https://graph.instagram.com/v21.0/me/messages'
+            : 'https://graph.facebook.com/v21.0/me/messages';
+
+          const res = await fetch(endpoint, {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${process.env.INSTAGRAM_TEST_ACCESS_TOKEN}`,
+              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -120,8 +141,18 @@ export class ConversationsService {
               message: { text },
             }),
           });
-        } catch (e) {
-          // Gracefully continue even if Meta Graph API throws in dev mode
+          const resData = await res.json();
+          if (resData?.message_id) {
+            await this.prisma.message.update({
+              where: { id: message.id },
+              data: { externalMessageId: resData.message_id, status: 'delivered' },
+            });
+            this.logger.log(`Live Instagram DM successfully delivered: ${resData.message_id}`);
+          } else if (resData?.error) {
+            this.logger.error(`Live Meta Graph API DM error: ${resData.error.message}`);
+          }
+        } catch (e: any) {
+          this.logger.error(`Live Meta Graph API request exception: ${e.message}`);
         }
       }
     }

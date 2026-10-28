@@ -1,0 +1,14 @@
+.git
+.github
+node_modules
+dist
+.next
+.env
+.env.*
+!.env.example
+!.env.docker.example
+backups
+*.log
+recordings_1080p
+review_videos
+*.mp4

@@ -6,6 +6,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   private readonly logger = new Logger(PrismaService.name);
 
   async onModuleInit() {
+    const rawUrl = process.env.DATABASE_URL || '';
+    const sanitizedUrl = rawUrl.replace(/:\/\/[^:]+:[^@]+@/, '://***:***@');
+    this.logger.log(`Initializing database connection with target: ${sanitizedUrl || '[DATABASE_URL not set]'}`);
+
     try {
       await this.$connect();
       this.logger.log('Connected to database successfully.');

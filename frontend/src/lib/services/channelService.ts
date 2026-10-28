@@ -42,4 +42,22 @@ export const channelService = {
     }
     return true;
   },
+
+  async initiateOAuth(workspaceId: string = 'empeor-smart-solutions'): Promise<string> {
+    try {
+      const data = await ApiClient.post<{ redirectUrl: string }>(`/workspaces/${workspaceId}/channels/oauth/initiate`);
+      if (data && data.redirectUrl) return data.redirectUrl;
+    } catch (err) {
+      console.warn('[channelService] Live OAuth initiate failed, generating fallback dialog URL:', err);
+    }
+    const appId = '4558736907726599';
+    const redirect = `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/app/channels`;
+    const scopes = 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments';
+    return `https://www.facebook.com/v21.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirect)}&scope=${scopes}&state=${workspaceId}`;
+  },
+
+  async handleCallback(workspaceId: string = 'empeor-smart-solutions', code: string): Promise<any> {
+    const cleanCode = code.replace(/#_.*$/, '').replace(/#.*$/, '').trim();
+    return await ApiClient.post(`/workspaces/${workspaceId}/channels/oauth/callback`, { code: cleanCode });
+  },
 };

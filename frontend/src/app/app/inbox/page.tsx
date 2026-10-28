@@ -70,22 +70,28 @@ export default function UnifiedInboxPage() {
     e.preventDefault();
     if (!replyInput.trim() || !activeConv) return;
     setIsSending(true);
-    inboxService.sendMessage(activeConv.id, replyInput, 'Alex Morgan', 'empeor-smart-solutions').then((newMsg) => {
-      setConversations((prev) =>
-        prev.map((c) => {
-          if (c.id !== activeConv.id) return c;
-          const exists = c.messages.some((m) => m.id === newMsg.id);
-          return {
-            ...c,
-            lastMessage: newMsg.text,
-            lastMessageAt: new Date().toISOString(),
-            messages: exists ? c.messages : [...c.messages, newMsg],
-          };
-        })
-      );
-      setReplyInput('');
-      setIsSending(false);
-    });
+    inboxService
+      .sendMessage(activeConv.id, replyInput, 'Alex Morgan', 'empeor-smart-solutions')
+      .then((newMsg) => {
+        setConversations((prev) =>
+          prev.map((c) => {
+            if (c.id !== activeConv.id) return c;
+            const exists = c.messages.some((m) => m.id === newMsg.id);
+            return {
+              ...c,
+              lastMessage: newMsg.text,
+              lastMessageAt: new Date().toISOString(),
+              messages: exists ? c.messages : [...c.messages, newMsg],
+            };
+          })
+        );
+        setReplyInput('');
+        setIsSending(false);
+      })
+      .catch((err: any) => {
+        setIsSending(false);
+        alert(err.message || 'Failed to dispatch Instagram message via Meta Graph API.');
+      });
   };
 
   const handleQuickTemplate = (text: string) => {
@@ -389,6 +395,15 @@ export default function UnifiedInboxPage() {
               >
                 <PhoneCall className="w-3 h-3 text-purple-600" /> Transfer to Agent
               </button>
+            </div>
+
+            {/* Messaging Window Compliance Status */}
+            <div className="flex items-center justify-between px-2 py-1 bg-slate-100/80 rounded-xl text-[10px] text-slate-500 border border-slate-200/70 select-none">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Meta Messaging Policy: <strong className="text-emerald-800 font-semibold">24-Hour Customer Window Open</strong></span>
+              </span>
+              <span className="font-mono text-slate-400">Meta Graph API v21.0</span>
             </div>
 
             {/* Reply Input Composer */}

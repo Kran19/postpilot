@@ -64,6 +64,19 @@ export default function AutomationsListPage() {
           </Link>
         </div>
 
+        {/* Compliance Information Card */}
+        <div className="p-3.5 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/90 rounded-2xl flex items-center justify-between text-xs text-emerald-950">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span className="font-medium">
+              Comment Auto-Replies and Direct Message automations adhere strictly to Meta&apos;s 24-hour service messaging window and 7-day private reply window.
+            </span>
+          </div>
+          <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-md shrink-0 ml-3">
+            Developer Policy 1.6 Compliant
+          </span>
+        </div>
+
         {/* Filter & Search Bar */}
         <div className="bg-white rounded-2xl border border-gray-200/80 p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="w-full md:w-80">

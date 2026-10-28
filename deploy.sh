@@ -88,10 +88,10 @@ cmd_deploy() {
 
     log_info "Verifying health endpoint..."
     HEALTH_OUTPUT=$(curl -s "http://127.0.0.1:4015/health" || curl -s "https://${DOMAIN}/health" || echo "")
-    if [[ "${HEALTH_OUTPUT}" == *"up"* ]]; then
-        log_success "Deployment Complete! Healthcheck response: ${HEALTH_OUTPUT}"
+    if [[ "${HEALTH_OUTPUT}" == *"\"status\":\"up\""* ]] && [[ "${HEALTH_OUTPUT}" == *"\"database\":\"healthy\""* ]]; then
+        log_success "Deployment Complete & Database Healthy! Healthcheck response: ${HEALTH_OUTPUT}"
     else
-        log_warn "Health response: ${HEALTH_OUTPUT:-Endpoint pending startup}."
+        log_error "Deployment Alert: Health check reported unhealthy or degraded status: ${HEALTH_OUTPUT:-Endpoint pending startup}."
         log_info "Check container logs with: ./deploy.sh logs backend"
     fi
 

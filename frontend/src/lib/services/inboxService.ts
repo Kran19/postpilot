@@ -23,36 +23,10 @@ export const inboxService = {
     senderName: string = 'Support Agent',
     workspaceId: string = 'empeor-smart-solutions',
   ): Promise<Message> {
-    try {
-      const msg = await ApiClient.post<Message>(
-        `/workspaces/${workspaceId}/inbox/conversations/${conversationId}/messages`,
-        { text },
-      );
-      if (msg && msg.id) {
-        return msg;
-      }
-    } catch (err) {
-      console.warn('[inboxService] Live send message failed, using local optimistic message:', err);
-    }
-
-    const newMsg: Message = {
-      id: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      conversationId,
-      sender: 'agent',
-      senderName,
-      text,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      channel: 'instagram',
-    };
-    const conv = MOCK_CONVERSATIONS.find((c) => c.id === conversationId);
-    if (conv) {
-      conv.lastMessage = text;
-      conv.lastMessageAt = new Date().toISOString();
-      conv.status = 'open';
-      if (!conv.messages.some((m) => m.id === newMsg.id)) {
-        conv.messages.push(newMsg);
-      }
-    }
-    return newMsg;
+    return await ApiClient.post<Message>(
+      `/workspaces/${workspaceId}/inbox/conversations/${conversationId}/messages`,
+      { text },
+    );
   },
 };
+
